@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>反馈页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f7f7f7;
+        }
+        .feedback-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            height: 180px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            resize: none;
+        }
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .thank-you {
+            display: none;
+            font-size: 18px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="feedback-container">
+        <h2>反馈页面</h2>
+        <input type="email" id="userEmail" placeholder="请输入您的邮箱" required>
+        <textarea id="feedback" placeholder="请在这里填写你的反馈..."></textarea>
+        <br>
+        <button id="submitBtn">提交反馈</button>
+        <div id="thankYouMessage" class="thank-you">感谢你的反馈！</div>
+    </div>
+
+    <!-- 使用 EmailJS 最新 CDN -->
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script>
+        emailjs.init("z4g4n6d03bHUs1Pg4");  // 使用你提供的 Public Key
+
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            const feedback = document.getElementById('feedback').value;
+            const userEmail = document.getElementById('userEmail').value;  // 获取用户输入的邮箱
+            if (feedback.trim() === "") {
+                alert("请填写反馈内容！");
+                return;
+            }
+            if (userEmail.trim() === "") {
+                alert("请输入您的邮箱！");
+                return;
+            }
+
+            // 调用 EmailJS API 发送邮件
+            sendFeedback(feedback, userEmail);
+        });
+
+        function sendFeedback(feedback, userEmail) {
+            const templateParams = {
+                feedback: feedback,
+                user_email: userEmail  // 使用用户输入的邮箱
+            };
+
+            // 使用提供的 Service ID 和 Template ID
+            emailjs.send("service_1bg72vb", "template_kszmb5q", templateParams)
+                .then(function(response) {
+                    // 发送成功后的回调
+                    console.log("邮件发送成功:", response);
+                    document.getElementById('thankYouMessage').style.display = 'block';  // 显示感谢反馈信息
+                    document.getElementById('feedback').value = "";  // 清空反馈框
+                    document.getElementById('userEmail').value = "";  // 清空邮箱框
+                }, function(error) {
+                    // 发送失败后的回调
+                    console.log("邮件发送失败:", error);
+                    alert('邮件发送失败，请稍后再试。');
+                });
+        }
+    </script>
+
+</body>
+</html>
